@@ -42,15 +42,18 @@ def collect_skill_names(data: dict[str, Any]) -> set[str]:
             if not isinstance(items, list):
                 continue
             for item in items:
-                names.add(str(item))
+                if isinstance(item, str) and item.strip():
+                    names.add(item)
     aliases = skills.get("aliases", {})
     if isinstance(aliases, dict):
         for canonical, aliases in aliases.items():
-            names.add(str(canonical))
+            if isinstance(canonical, str) and canonical.strip():
+                names.add(canonical)
             if not isinstance(aliases, list):
                 continue
             for alias in aliases:
-                names.add(str(alias))
+                if isinstance(alias, str) and alias.strip():
+                    names.add(alias)
     return names
 
 
@@ -123,7 +126,10 @@ def _validate_skill_field(item: dict[str, Any], path: str, known_skills: set[str
     skills = item["skills"]
     if not _require_list(skills, f"{path}.skills", errors):
         return
-    for skill in skills:
+    for index, skill in enumerate(skills):
+        if not isinstance(skill, str) or not skill.strip():
+            errors.append(f"{path}.skills[{index}] must be a non-empty string")
+            continue
         if str(skill) not in known_skills:
             errors.append(f"unknown skill '{skill}' in {path}")
 
@@ -185,12 +191,16 @@ def _require_non_empty_string(item: dict[str, Any], key: str, path: str, errors:
         errors.append(f"{path}.{key} must be a non-empty string")
 
 
+def _is_plain_int(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
 def _validate_constraints(data: dict[str, Any], errors: list[str]) -> None:
     constraints = data["constraints"]
     if not _require_mapping(constraints, "constraints", errors):
         return
     max_pages = constraints.get("max_pages")
-    if not isinstance(max_pages, int) or max_pages < 1:
+    if not _is_plain_int(max_pages) or max_pages < 1:
         errors.append("constraints.max_pages must be an integer greater than 0")
     if not _require_list(constraints.get("bullet_reduction_order", []), "constraints.bullet_reduction_order", errors):
         return
@@ -208,6 +218,9 @@ def _validate_rendering(data: dict[str, Any], errors: list[str]) -> None:
         if not _require_mapping(labels, "rendering.section_labels", errors):
             return
         for section in section_order:
+            if not isinstance(section, str) or not section.strip():
+                errors.append("rendering.section_order item must be a string")
+                continue
             if section not in labels:
                 errors.append(f"missing rendering.section_labels entry for {section}")
 
@@ -258,6 +271,15 @@ def _validate_skills(data: dict[str, Any], errors: list[str]) -> None:
     skills = data["skills"]
     if not _require_mapping(skills, "skills", errors):
         return
+    aliases = skills.get("aliases", {})
+    if _require_mapping(aliases, "skills.aliases", errors):
+        for canonical, aliases_for_canonical in aliases.items():
+            alias_path = f"skills.aliases.{canonical}"
+            if not _require_list(aliases_for_canonical, alias_path, errors):
+                continue
+            for index, alias in enumerate(aliases_for_canonical):
+                if not isinstance(alias, str) or not alias.strip():
+                    errors.append(f"{alias_path}[{index}] must be a non-empty string")
     groups = skills.get("groups")
     if not _require_list(groups, "skills.groups", errors):
         return
@@ -271,6 +293,9 @@ def _validate_skills(data: dict[str, Any], errors: list[str]) -> None:
             continue
         if not group["items"]:
             errors.append(f"{group_path}.items must not be empty")
+        for item_index, item in enumerate(group["items"]):
+            if not isinstance(item, str) or not item.strip():
+                errors.append(f"{group_path}.items[{item_index}] must be a non-empty string")
 
 
 def _validate_experience(data: dict[str, Any], errors: list[str]) -> None:
@@ -294,7 +319,7 @@ def _validate_experience(data: dict[str, Any], errors: list[str]) -> None:
                 _require_non_empty_string(role, key, role_path, errors)
             required = role.get("bullets_required")
             bullets = role.get("master_bullets")
-            if not isinstance(required, int) or required < 0:
+            if not _is_plain_int(required) or required < 0:
                 errors.append(f"{role_path}.bullets_required must be an integer greater than or equal to 0")
                 required = 0
             if not _require_list(bullets, f"{role_path}.master_bullets", errors):
@@ -356,7 +381,7 @@ def _validate_skill_references(data: dict[str, Any], errors: list[str]) -> None:
                 if isinstance(bullet, dict):
                     _validate_skill_field(bullet, f"bullet {_item_id(bullet)}", known_skills, errors)
 
-    for collection_name in ("projects", "extracurriculars"):
+    for collection_name in ("projects", "certifications", "extracurriculars"):
         for item in _as_list(data.get(collection_name)):
             if not isinstance(item, dict):
                 continue

@@ -107,6 +107,74 @@ def test_string_valued_bullet_skills_returns_type_error():
     assert "bullet role-001-b001.skills must be a list" in errors
 
 
+def test_rendering_section_order_items_must_be_strings():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["rendering"]["section_order"] = [{"bad": "shape"}]
+
+    errors = validate_resume(broken)
+
+    assert "rendering.section_order item must be a string" in errors
+
+
+def test_certification_skill_references_are_validated():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["certifications"] = [
+        {
+            "id": "cert-001",
+            "name": "Example Certification",
+            "skills": ["Unknown Tool"],
+            "master_bullets": [
+                {
+                    "id": "cert-001-b001",
+                    "text": "Completed certification project.",
+                    "skills": ["Another Missing Tool"],
+                }
+            ],
+        }
+    ]
+
+    errors = validate_resume(broken)
+
+    assert "unknown skill 'Unknown Tool' in certifications item cert-001" in errors
+    assert "unknown skill 'Another Missing Tool' in certifications item cert-001 bullet cert-001-b001" in errors
+
+
+def test_skill_inventory_items_must_be_strings():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["skills"]["groups"][0]["items"] = [{"bad": "shape"}]
+
+    errors = validate_resume(broken)
+
+    assert "skill group skills-programming.items[0] must be a non-empty string" in errors
+
+
+def test_skill_aliases_must_be_string_lists():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["skills"]["aliases"]["Optimization"] = "MILP"
+    broken["skills"]["aliases"]["GIS"] = [""]
+
+    errors = validate_resume(broken)
+
+    assert "skills.aliases.Optimization must be a list" in errors
+    assert "skills.aliases.GIS[0] must be a non-empty string" in errors
+
+
+def test_boolean_values_do_not_satisfy_integer_fields():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["constraints"]["max_pages"] = True
+    broken["experience"][0]["roles"][0]["bullets_required"] = True
+
+    errors = validate_resume(broken)
+
+    assert "constraints.max_pages must be an integer greater than 0" in errors
+    assert "role role-001.bullets_required must be an integer greater than or equal to 0" in errors
+
+
 def test_yaml_file_is_valid_yaml():
     raw = FIXTURE.read_text(encoding="utf-8")
 
