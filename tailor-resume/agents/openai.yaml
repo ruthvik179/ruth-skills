@@ -1,4 +1,4 @@
 interface:
   display_name: "Tailor Resume"
   short_description: "Generate job-tailored resume packages from a YAML resume bank."
-  default_prompt: "Tailor my resume for this job URL:"
+  default_prompt: "Use $tailor-resume to tailor my resume for this job URL:"
