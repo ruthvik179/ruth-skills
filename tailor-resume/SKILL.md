@@ -5,25 +5,26 @@ description: Generate job-tailored resume packages from a complete YAML resume s
 
 # Tailor Resume
 
-Create a job-specific resume package from `config/resume.yaml` and a job posting.
+Create a job-specific resume package from a user-provided resume YAML file and a job posting.
 
 ## Inputs
 
 - Job URL from the user.
-- `config/resume.yaml` as the source of truth.
+- Path to the user's resume YAML source of truth, referred to below as `<resume-yaml>`.
 - Pasted job text, saved HTML, or PDF when scraping fails or produces thin text.
 
 ## Workflow
 
+0. If the user did not provide a resume YAML path, ask for one before tailoring. Do not use or create resume source data inside the skill folder.
 1. Create a new output folder under `outputs/<company>-<role>-<date>/`. Add a suffix when the folder already exists.
 2. Run `scripts/scrape_job.py <url> --output-dir <output-folder>`.
 3. If scraping fails or reports `fallback_required: true`, ask the user for pasted job text, saved HTML, or PDF. Save the fallback content as `job.txt` and record the fallback in `scrape.yaml`.
-4. Run `scripts/validate_resume_yaml.py config/resume.yaml`.
+4. Run `scripts/validate_resume_yaml.py <resume-yaml>`.
 5. Analyze `job.txt` for required skills, preferred skills, responsibilities, seniority, domain terms, repeated keywords, and ATS-relevant language.
-6. Select source-backed summary facts, skills, education details, experience bullets, and extracurriculars from `config/resume.yaml`.
+6. Select source-backed summary facts, skills, education details, experience bullets, and extracurriculars from the user-provided resume YAML.
 7. Rewrite selected bullets using job language while preserving factual claims.
 8. Write `selected-resume.yaml` using `references/selected-resume-schema.md`.
-9. Validate that every final bullet has one or more source IDs from `config/resume.yaml`.
+9. Validate that every final bullet has one or more source IDs from `<resume-yaml>`.
 10. Run `scripts/render_resume.py --selected <output-folder>/selected-resume.yaml --output-dir <output-folder> --max-pages <constraints.max_pages>`.
 11. Run `scripts/create_report.py --selected <output-folder>/selected-resume.yaml --scrape <output-folder>/scrape.yaml --render <output-folder>/render.yaml --output <output-folder>/REPORT.md`.
 

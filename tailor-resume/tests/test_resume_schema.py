@@ -6,7 +6,7 @@ import yaml
 from tailor_resume.schema import collect_source_ids, load_resume_yaml, validate_resume
 
 
-FIXTURE = Path(__file__).resolve().parents[1] / "config" / "resume.yaml"
+FIXTURE = Path(__file__).resolve().parent / "fixtures" / "resume.yaml"
 
 
 def test_valid_resume_yaml_passes_validation():
@@ -44,7 +44,7 @@ def test_role_bullet_count_is_enforced():
 
     errors = validate_resume(broken)
 
-    assert "role role-001 requires 4 bullets but has 0" in errors
+    assert "role role-001 requires 2 bullets but has 0" in errors
 
 
 def test_bullet_skill_must_exist_in_inventory_or_aliases():

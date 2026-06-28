@@ -1,0 +1,124 @@
+constraints:
+  max_pages: 2
+  default_bullets_per_role: 2
+  bullet_reduction_order:
+    - extracurriculars
+    - projects
+    - oldest_role_bullets
+  require_exact_role_bullet_count: true
+  allow_synthesis: true
+  synthesis_requires_provenance: true
+
+rendering:
+  primary_format: docx
+  generate_pdf: true
+  section_order:
+    - summary
+    - education
+    - experience
+    - skills
+    - projects
+    - certifications
+    - extracurriculars
+  section_labels:
+    summary: Summary
+    education: Education
+    experience: Experience
+    skills: Skills
+    projects: Projects
+    certifications: Certifications
+    extracurriculars: Extracurriculars
+
+profile:
+  name: Example Candidate
+  headline: Data Scientist
+  email: candidate@example.com
+  phone: "+1 (555) 555-5555"
+  location: City, ST
+  links:
+    linkedin: https://www.linkedin.com/in/example
+
+targeting:
+  title_variants:
+    - Data Scientist
+    - Machine Learning Engineer
+  summary_facts:
+    - id: summary-001
+      text: Data scientist with experience in decision systems and analytics.
+      themes: [data-science, analytics]
+    - id: summary-002
+      text: Experience building production decision systems with optimization and cloud pipelines.
+      skills: [Optimization, AWS Lambda]
+      themes: [decision-systems, production-systems]
+
+education:
+  - id: edu-001
+    institution: Example University
+    location: City, ST
+    degree: Master's in Analytics
+    start: 2022-08
+    end: 2024-05
+    details:
+      - id: edu-001-d001
+        text: Research Assistant, Analytics Lab.
+        skills: [Machine Learning]
+
+skills:
+  aliases:
+    Optimization: [optimization, MILP]
+    Machine Learning: [ML, AI]
+    AWS Lambda: [Lambda]
+  groups:
+    - id: skills-programming
+      name: Programming
+      items: [Python, SQL]
+    - id: skills-ml-ai
+      name: ML/AI
+      items: [Machine Learning, RAG]
+    - id: skills-data-cloud
+      name: Data/Cloud
+      items: [AWS Lambda, Airflow]
+    - id: skills-visualization
+      name: Visualization
+      items: [Power BI]
+    - id: skills-optimization
+      name: Optimization
+      items: [Optimization, MILP]
+    - id: skills-other
+      name: Other
+      items: [AWS API Gateway, ETL]
+
+experience:
+  - id: company-001
+    company: Example Analytics Co
+    location: City, ST
+    roles:
+      - id: role-001
+        title: Data Scientist
+        start: 2024-05
+        end: Present
+        bullets_required: 2
+        master_bullets:
+          - id: role-001-b001
+            text: Built an optimization platform for contract allocation decisions.
+            outcomes:
+              - improved allocation quality
+            skills: [Optimization, AWS API Gateway, AWS Lambda]
+            themes: [decision-systems, operations-optimization]
+          - id: role-001-b002
+            text: Developed analytics pipelines that generated operational alerts.
+            outcomes:
+              - reduced manual review effort
+            skills: [Python, SQL]
+            themes: [workflow-automation, analytics]
+
+projects: []
+
+certifications: []
+
+extracurriculars:
+  - id: extra-001
+    text: Led a student entrepreneurship group.
+    outcomes:
+      - supported early-stage startup projects
+    themes: [leadership, entrepreneurship]

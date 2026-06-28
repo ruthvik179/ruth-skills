@@ -4,7 +4,7 @@ from tailor_resume.schema import load_resume_yaml
 from tailor_resume.selected import validate_selected_resume
 
 
-RESUME = Path(__file__).resolve().parents[1] / "config" / "resume.yaml"
+RESUME = Path(__file__).resolve().parent / "fixtures" / "resume.yaml"
 
 
 def _valid_selected():
@@ -27,7 +27,7 @@ def _valid_selected():
         "experience": [
             {
                 "company_id": "company-001",
-                "company": "Koch Ag & Energy Solutions",
+                "company": "Example Analytics Co",
                 "location": "Wichita, KS",
                 "roles": [
                     {
@@ -49,7 +49,7 @@ def _valid_selected():
         "education": [
             {
                 "source_ids": ["edu-001"],
-                "text": "Oklahoma State University - Master's in Business Analytics and Data Science",
+                "text": "Example University - Master's in Analytics",
             }
         ],
         "projects": [],

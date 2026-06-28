@@ -6,6 +6,8 @@ Create a Codex skill that takes a job posting URL, extracts the job description,
 
 The skill is based on the behavior of the `tailored-resume-generator` skill from `ComposioHQ/awesome-codex-skills`, but extends it with automated scraping, a structured master resume bank, provenance tracking, config-enforced constraints, deterministic file generation, and ATS validation.
 
+Update: the resume YAML is a user-provided input file, not a file stored inside the skill. The skill may include schema references and anonymized test fixtures, but it must not bundle a real user's resume source of truth.
+
 ## Output Contract
 
 Each run creates a new folder under:
@@ -30,7 +32,7 @@ If a folder name already exists, the tool must avoid overwriting by adding a det
 Use a Codex skill named `tailor-resume` backed by bundled scripts:
 
 - `SKILL.md`: workflow instructions, triggering guidance, and guardrails for Codex.
-- `config/resume.yaml`: complete resume source of truth.
+- user-provided resume YAML path: complete resume source of truth supplied by the person using the skill.
 - `scripts/scrape_job.py`: accepts a URL, extracts raw and cleaned job text, and records scrape metadata.
 - `scripts/validate_resume_yaml.py`: validates required fields, constraints, per-role bullet counts, and source IDs.
 - `scripts/render_resume.py`: renders `resume.docx` and `resume.pdf` from selected structured content.
@@ -343,7 +345,7 @@ Validation must enforce that:
    - seniority level
    - domain terms
    - repeated keywords
-6. Load and validate `resume.yaml`.
+6. Load and validate the user-provided resume YAML.
 7. Score master bullets and skills against the extracted job signals.
 8. Select the configured number of bullets for each held position.
 9. Rewrite selected bullets using relevant job language while preserving the factual claim.
