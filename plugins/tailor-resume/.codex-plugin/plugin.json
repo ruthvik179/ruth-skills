@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Generate job-tailored resume packages from a YAML resume source of truth.",
   "author": {
-    "name": "Ruthvik Kadiyala"
+    "name": "Ruth Skills"
   },
   "keywords": [
     "resume",
@@ -16,7 +16,7 @@
     "displayName": "Tailor Resume",
     "shortDescription": "Generate job-tailored resume packages from a YAML resume bank.",
     "longDescription": "Tailor Resume helps Codex turn a job posting and a user-provided resume YAML source of truth into a provenance-backed resume package with DOCX, PDF, ATS checks, gap notes, and a rationale report.",
-    "developerName": "Ruthvik Kadiyala",
+    "developerName": "Ruth Skills",
     "category": "Productivity",
     "capabilities": [
       "Write",

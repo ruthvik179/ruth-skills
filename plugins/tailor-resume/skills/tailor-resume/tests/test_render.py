@@ -15,7 +15,7 @@ def _selected():
         "skills": {"groups": [{"name": "Programming", "items": ["Python", "SQL"]}]},
         "experience": [
             {
-                "company": "Koch Ag & Energy Solutions",
+                "company": "Example Industrial Analytics",
                 "location": "Wichita, KS",
                 "roles": [
                     {
@@ -69,4 +69,4 @@ def test_extract_pdf_text_returns_visible_resume_text(tmp_path):
     text = extract_pdf_text(Path(tmp_path / "resume.pdf"))
 
     assert "Data Scientist" in text
-    assert "Koch Ag & Energy Solutions" in text
+    assert "Example Industrial Analytics" in text

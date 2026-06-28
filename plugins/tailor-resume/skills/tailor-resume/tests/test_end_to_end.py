@@ -12,7 +12,7 @@ def test_end_to_end_artifacts_are_created(tmp_path):
         "skills": {"groups": [{"name": "Programming", "items": ["Python", "SQL"]}, {"name": "Optimization", "items": ["Gurobi"]}]},
         "experience": [
             {
-                "company": "Koch Ag & Energy Solutions",
+                "company": "Example Industrial Analytics",
                 "location": "Wichita, KS",
                 "roles": [
                     {

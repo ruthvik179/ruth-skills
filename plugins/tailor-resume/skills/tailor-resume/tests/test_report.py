@@ -8,7 +8,7 @@ def test_report_contains_required_sections():
         "skills": {"groups": [{"name": "Programming", "items": ["Python"]}]},
         "experience": [
             {
-                "company": "Koch Ag & Energy Solutions",
+                "company": "Example Industrial Analytics",
                 "roles": [
                     {
                         "title": "Data Scientist",

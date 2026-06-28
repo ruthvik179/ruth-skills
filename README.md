@@ -8,10 +8,10 @@ Codex plugin marketplace for reusable local skills.
 
 ## Install From GitHub
 
-After this repository is pushed to GitHub, install the marketplace:
+Install the marketplace from GitHub:
 
 ```powershell
-codex plugin marketplace add <owner>/<repo> --ref main
+codex plugin marketplace add ruthvik179/ruth-skills --ref master
 codex plugin add tailor-resume@ruth-skills
 ```
 
