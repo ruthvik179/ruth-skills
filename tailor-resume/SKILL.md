@@ -1,85 +1,42 @@
 ---
 name: tailor-resume
-description: [TODO: Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]
+description: Generate job-tailored resume packages from a complete YAML resume source of truth. Use when the user provides a job posting URL or pasted job description and wants a tailored resume, ATS checklist, gap notes, rationale report, DOCX resume, PDF resume, or provenance-backed resume rewrite using a master bullet and skills bank.
 ---
 
 # Tailor Resume
 
-## Overview
+Create a job-specific resume package from `config/resume.yaml` and a job posting.
 
-[TODO: 1-2 sentences explaining what this skill enables]
+## Inputs
 
-## Structuring This Skill
+- Job URL from the user.
+- `config/resume.yaml` as the source of truth.
+- Pasted job text, saved HTML, or PDF when scraping fails or produces thin text.
 
-[TODO: Choose the structure that best fits this skill's purpose. Common patterns:
+## Workflow
 
-**1. Workflow-Based** (best for sequential processes)
-- Works well when there are clear step-by-step procedures
-- Example: DOCX skill with "Workflow Decision Tree" -> "Reading" -> "Creating" -> "Editing"
-- Structure: ## Overview -> ## Workflow Decision Tree -> ## Step 1 -> ## Step 2...
+1. Create a new output folder under `outputs/<company>-<role>-<date>/`. Add a suffix when the folder already exists.
+2. Run `scripts/scrape_job.py <url> --output-dir <output-folder>`.
+3. If scraping fails or reports `fallback_required: true`, ask the user for pasted job text, saved HTML, or PDF. Save the fallback content as `job.txt` and record the fallback in `scrape.yaml`.
+4. Run `scripts/validate_resume_yaml.py config/resume.yaml`.
+5. Analyze `job.txt` for required skills, preferred skills, responsibilities, seniority, domain terms, repeated keywords, and ATS-relevant language.
+6. Select source-backed summary facts, skills, education details, experience bullets, and extracurriculars from `config/resume.yaml`.
+7. Rewrite selected bullets using job language while preserving factual claims.
+8. Write `selected-resume.yaml` using `references/selected-resume-schema.md`.
+9. Validate that every final bullet has one or more source IDs from `config/resume.yaml`.
+10. Run `scripts/render_resume.py --selected <output-folder>/selected-resume.yaml --output-dir <output-folder> --max-pages <constraints.max_pages>`.
+11. Run `scripts/create_report.py --selected <output-folder>/selected-resume.yaml --scrape <output-folder>/scrape.yaml --render <output-folder>/render.yaml --output <output-folder>/REPORT.md`.
 
-**2. Task-Based** (best for tool collections)
-- Works well when the skill offers different operations/capabilities
-- Example: PDF skill with "Quick Start" -> "Merge PDFs" -> "Split PDFs" -> "Extract Text"
-- Structure: ## Overview -> ## Quick Start -> ## Task Category 1 -> ## Task Category 2...
+## Guardrails
 
-**3. Reference/Guidelines** (best for standards or specifications)
-- Works well for brand guidelines, coding standards, or requirements
-- Example: Brand styling with "Brand Guidelines" -> "Colors" -> "Typography" -> "Features"
-- Structure: ## Overview -> ## Guidelines -> ## Specifications -> ## Usage...
+- Never invent tools, metrics, employers, dates, credentials, outcomes, or responsibilities.
+- Convert unsupported job requirements into gap notes.
+- Allow synthesized bullets only when all supporting source IDs are listed.
+- Keep DOCX as the primary submission format.
+- Keep formatting ATS-safe: one column, standard headings, no icons, no text boxes, no sidebars, no decorative elements.
+- If rendered output exceeds the configured page limit, reduce content according to `constraints.bullet_reduction_order`, re-render, and document removed content in `REPORT.md`.
 
-**4. Capabilities-Based** (best for integrated systems)
-- Works well when the skill provides multiple interrelated features
-- Example: Product Management with "Core Capabilities" -> numbered capability list
-- Structure: ## Overview -> ## Core Capabilities -> ### 1. Feature -> ### 2. Feature...
+## References
 
-Patterns can be mixed and matched as needed. Most skills combine patterns (e.g., start with task-based, add workflow for complex operations).
-
-Delete this entire "Structuring This Skill" section when done - it's just guidance.]
-
-## [TODO: Replace with the first main section based on chosen structure]
-
-[TODO: Add content here. See examples in existing skills:
-- Code samples for technical skills
-- Decision trees for complex workflows
-- Concrete examples with realistic user requests
-- References to scripts/templates/references as needed]
-
-## Resources (optional)
-
-Create only the resource directories this skill actually needs. Delete this section if no resources are required.
-
-### scripts/
-Executable code (Python/Bash/etc.) that can be run directly to perform specific operations.
-
-**Examples from other skills:**
-- PDF skill: `fill_fillable_fields.py`, `extract_form_field_info.py` - utilities for PDF manipulation
-- DOCX skill: `document.py`, `utilities.py` - Python modules for document processing
-
-**Appropriate for:** Python scripts, shell scripts, or any executable code that performs automation, data processing, or specific operations.
-
-**Note:** Scripts may be executed without loading into context, but can still be read by Codex for patching or environment adjustments.
-
-### references/
-Documentation and reference material intended to be loaded into context to inform Codex's process and thinking.
-
-**Examples from other skills:**
-- Product management: `communication.md`, `context_building.md` - detailed workflow guides
-- BigQuery: API reference documentation and query examples
-- Finance: Schema documentation, company policies
-
-**Appropriate for:** In-depth documentation, API references, database schemas, comprehensive guides, or any detailed information that Codex should reference while working.
-
-### assets/
-Files not intended to be loaded into context, but rather used within the output Codex produces.
-
-**Examples from other skills:**
-- Brand styling: PowerPoint template files (.pptx), logo files
-- Frontend builder: HTML/React boilerplate project directories
-- Typography: Font files (.ttf, .woff2)
-
-**Appropriate for:** Templates, boilerplate code, document templates, images, icons, fonts, or any files meant to be copied or used in the final output.
-
----
-
-**Not every skill requires all three types of resources.**
+- Use `references/selected-resume-schema.md` before writing `selected-resume.yaml`.
+- Use `references/report-fields.md` before writing or reviewing `REPORT.md`.
