@@ -57,6 +57,56 @@ def test_bullet_skill_must_exist_in_inventory_or_aliases():
     assert "unknown skill 'Unknown Tool' in bullet role-001-b001" in errors
 
 
+def test_malformed_summary_fact_item_returns_error_instead_of_raising():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["targeting"]["summary_facts"] = ["not-a-mapping"]
+
+    errors = validate_resume(broken)
+
+    assert "targeting.summary_facts[0] must be a mapping" in errors
+
+
+def test_malformed_top_level_skills_shape_returns_error_instead_of_raising():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["skills"] = []
+
+    errors = validate_resume(broken)
+
+    assert "skills must be a mapping" in errors
+
+
+def test_duplicate_source_id_fails_validation():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["targeting"]["summary_facts"][0]["id"] = "role-001-b001"
+
+    errors = validate_resume(broken)
+
+    assert "duplicate source id: role-001-b001" in errors
+
+
+def test_education_detail_skill_must_exist_in_inventory_or_aliases():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["education"][0]["details"][0]["skills"] = ["Unknown Tool"]
+
+    errors = validate_resume(broken)
+
+    assert "unknown skill 'Unknown Tool' in education detail edu-001-d001" in errors
+
+
+def test_string_valued_bullet_skills_returns_type_error():
+    data = load_resume_yaml(FIXTURE)
+    broken = copy.deepcopy(data)
+    broken["experience"][0]["roles"][0]["master_bullets"][0]["skills"] = "Python"
+
+    errors = validate_resume(broken)
+
+    assert "bullet role-001-b001.skills must be a list" in errors
+
+
 def test_yaml_file_is_valid_yaml():
     raw = FIXTURE.read_text(encoding="utf-8")
 

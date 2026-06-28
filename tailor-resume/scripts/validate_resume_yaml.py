@@ -18,7 +18,12 @@ def main() -> int:
         print(f"ERROR: could not read {args.resume_yaml}: {exc}", file=sys.stderr)
         return 2
 
-    errors = validate_resume(data)
+    try:
+        errors = validate_resume(data)
+    except Exception as exc:
+        print(f"ERROR: validation failed: {exc}", file=sys.stderr)
+        return 2
+
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
